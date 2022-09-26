@@ -1,12 +1,25 @@
-import React from "react";
+import React, { Component } from "react";
 // import 'antd/dist/antd.css';
 // import './index.css';
 import { Pagination } from "antd";
 
-const Footer = () => (
-  <>
-    <Pagination centered size="default" total={50} />
-  </>
-);
+export default class Footer extends Component {
+  render() {
+    const { totalPages, handlePageClick } = this.props;
 
-export default Footer;
+    return (
+      <>
+        {totalPages > 1 && (
+          <Pagination
+            centered
+            defaultCurrent={1}
+            size="default"
+            showSizeChanger={false}
+            total={totalPages}
+            onChange={handlePageClick}
+          />
+        )}
+      </>
+    );
+  }
+}

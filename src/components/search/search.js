@@ -6,13 +6,10 @@ import SwapiService from "../servises/swapiServis";
 export default class Search extends Component {
   swapiService = new SwapiService();
   render() {
-    const { onLabelChange, label } = this.props;
+    const { onLabelChange } = this.props;
 
-    this.onSubmit = (e) => {
-      e.preventDefault();
-    };
     return (
-      <form onSubmit={this.onSubmit}>
+      <form>
         <Input placeholder="Type to search..." onChange={onLabelChange} />
       </form>
     );

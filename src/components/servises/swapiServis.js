@@ -3,13 +3,26 @@ export default class SwapiService {
   requestType = "/search/movie";
   keyAPI = "?api_key=e3c7bd01103073ebcb552edef41991b9";
   language = "&language=en-US";
-  // query = "&query=return";
-  // pageSearch = "&page=1";
-  // includeAdult = "&include_adult=false";
 
-  async getResource(url) {
+  // async getResource(url) {
+  //   const res = await fetch(
+  //     `${this._apiBase}${this.requestType}${this.keyAPI}${this.language}${url}`
+  //   );
+
+  //   if (!res.ok) {
+  //     throw new Error(`Ошибка сервера ${res.status}`);
+  //   }
+  // const body = await res.json();
+  // return body;
+  // }
+
+  async getValueAsRequest(string, pagesCount = 1) {
+    if (!string || /^\s+$/.test(string)) return;
+    // try {
     const res = await fetch(
-      `${this._apiBase}${this.requestType}${this.keyAPI}${this.language}${url}`
+      `${this._apiBase}${this.requestType}${this.keyAPI}${
+        this.language
+      }&query=${string.trim()}&page=${pagesCount}&include_adult=false`
     );
 
     if (!res.ok) {
@@ -17,20 +30,28 @@ export default class SwapiService {
     }
     const body = await res.json();
     return body;
+    //return res;
+    // } catch (error) {
+    //   console.log(`ошибка ${error}`);
+    // }
   }
 
-  async getValueAsRequest(string) {
-    if (!string || string === " ") return;
-    try {
-      const res = await this.getResource(
-        `&query=${string.trim()}&page=1&include_adult=false`
+  async getResponseGenreMovieDB() {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/genre/movie/list${this.keyAPI}`
+    );
+
+    if (!res.ok) {
+      throw new Error(
+        `Could not fetch ${`https://api.themoviedb.org/3/genre/movie/list${this.keyAPI}`}`` , received${res.status}`
       );
-      return res;
-    } catch (error) {
-      console.log(`ошибка ${error}`);
     }
+
+    const body = await res.json();
+
+    return body;
   }
 }
 
 // const movies = new SwapiService();
-// movies.getValueAsRequest("return").then((res) => console.log(res.results));
+// movies.getResponseGenreMovieDB().then((res) => console.log(res));

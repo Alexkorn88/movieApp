@@ -9,40 +9,57 @@ import ErrorIndicator from "../errorIndicator/errorIndacator";
 import Header from "../header";
 import Footer from "../footer";
 import debounce from "lodash.debounce";
-import { Alert } from "antd";
 
 export default class App extends Component {
   swapiService = new SwapiService();
   state = {
+    pageItems: {},
     items: [],
     loading: true,
     error: false,
-    errorRequest: false,
     label: "return",
+
+    offset: 0,
+    currentPageElements: [],
+    pagesCount: null,
+    totalPages: 0,
+    totalElementsCount: 0,
   };
 
   componentDidMount() {
     this.updateMovies();
+    this.updatePages();
   }
   componentDidUpdate(prevProps, prevState) {
     if (this.props.label !== prevState.label) {
       this.updateMovies();
+      this.updatePages();
     }
   }
   onError = (err) => {
     this.setState({ error: true, loading: false });
   };
 
-  onErrorRequest = (err) => {
-    this.setState({ errorRequest: true });
-  };
-
   updateMovies() {
     this.swapiService
-      .getValueAsRequest(this.state.label)
+      .getValueAsRequest(this.state.label, this.state.pagesCount)
       .then((res) => {
         this.setState({
           items: res.results,
+          loading: false,
+          totalPages: res.total_pages,
+          totalElementsCount: res.total_results,
+        });
+      })
+      .catch(this.onError);
+  }
+
+  updatePages() {
+    this.swapiService
+      .getValueAsRequest(this.state.label, this.state.pagesCount)
+      .then((res) => {
+        this.setState({
+          pageItems: res,
           loading: false,
         });
       })
@@ -53,34 +70,40 @@ export default class App extends Component {
     this.setState({
       label: e.target.value,
     });
-    // console.log(this.state.label);
   }, 500);
 
-  render() {
-    const { items, loading, error, label, errorRequest } = this.state;
+  handlePageClick = (value) => {
+    this.setState({ pagesCount: value });
+    //console.log(this.state.pagesCount);
+  };
 
-    const hasData = !(loading || error || errorRequest);
-    const errorMasage = error ? <ErrorIndicator /> : null;
+  render() {
+    const { items, loading, error, label, pageItems, pagesCount, totalPages } =
+      this.state;
+
+    const hasData = !(loading || error);
+    const errorMassage = error ? <ErrorIndicator /> : null;
     const spin = loading ? <Spin size="large" /> : null;
     const moviesGrid = hasData ? (
       <MoviesGrid items={items} loading={loading} error={error} />
     ) : null;
-    // const errorReq = errorRequest ? (
-    //   <Alert
-    //     message="Что-то пошло не так"
-    //     description="Пожалуйста проверьте запрос"
-    //     type="info"
-    //   />
-    // ) : null;
+    const startMassage = !label ? <span>Введите запрос</span> : moviesGrid;
+
     return (
       <div className="wrapper">
         <div className="container">
           <Header onLabelChange={this.onLabelChange} label={label} />
-          {errorMasage}
+          {errorMassage}
           {spin}
           {moviesGrid}
-          {/* {errorReq} */}
-          <Footer />
+          {startMassage}
+
+          <Footer
+            pageItems={pageItems}
+            pagesCount={pagesCount}
+            totalPages={totalPages}
+            handlePageClick={this.handlePageClick}
+          />
         </div>
       </div>
     );
