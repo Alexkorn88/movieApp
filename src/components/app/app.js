@@ -6,9 +6,11 @@ import MoviesGrid from "../moviesGrid";
 
 import "./app.css";
 import ErrorIndicator from "../errorIndicator/errorIndacator";
-import Header from "../header";
+//import Header from "../header";
 import Footer from "../footer";
 import debounce from "lodash.debounce";
+import { Tabs } from "antd";
+import Search from "../search";
 
 export default class App extends Component {
   swapiService = new SwapiService();
@@ -24,6 +26,8 @@ export default class App extends Component {
     pagesCount: null,
     totalPages: 0,
     totalElementsCount: 0,
+
+    tabCount: null,
   };
 
   componentDidMount() {
@@ -72,6 +76,10 @@ export default class App extends Component {
     });
   }, 500);
 
+  onChangeTab = (value) => {
+    this.setState({ tabCount: value });
+  };
+
   handlePageClick = (value) => {
     this.setState({ pagesCount: value });
     //console.log(this.state.pagesCount);
@@ -87,22 +95,48 @@ export default class App extends Component {
     const moviesGrid = hasData ? (
       <MoviesGrid items={items} loading={loading} error={error} />
     ) : null;
-    const startMassage = !label ? <span>Введите запрос</span> : moviesGrid;
-
+    //const startMassage = !label ? <span>Введите запрос</span> : moviesGrid;
+    // const activeTab =
+    //   tabCount === 1 ? console.log("Tab1") : console.log("Tab2");
     return (
       <div className="wrapper">
         <div className="container">
-          <Header onLabelChange={this.onLabelChange} label={label} />
-          {errorMassage}
-          {spin}
-          {moviesGrid}
-          {startMassage}
+          {/* <Header
+            onLabelChange={this.onLabelChange}
+            label={label}
+            onchangeTab={this.onChangeTab}
+          /> */}
 
-          <Footer
-            pageItems={pageItems}
-            pagesCount={pagesCount}
-            totalPages={totalPages}
-            handlePageClick={this.handlePageClick}
+          <Tabs
+            defaultActiveKey="1"
+            centered
+            onChange={this.onChangeTab}
+            items={[
+              {
+                label: "Search",
+                key: "1",
+                children: (
+                  <>
+                    <Search onLabelChange={this.onLabelChange} label={label} />
+                    {errorMassage}
+                    {spin}
+                    {moviesGrid}
+                    {/* {startMassage} */}
+                    <Footer
+                      pageItems={pageItems}
+                      pagesCount={pagesCount}
+                      totalPages={totalPages}
+                      handlePageClick={this.handlePageClick}
+                    />
+                  </>
+                ),
+              },
+              {
+                label: "Rated",
+                key: "2",
+                children: "Tab 2",
+              },
+            ]}
           />
         </div>
       </div>

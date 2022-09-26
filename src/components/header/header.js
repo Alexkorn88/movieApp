@@ -7,12 +7,13 @@ import { Component } from "react";
 
 export default class Header extends Component {
   render() {
-    const { onLabelChange, label } = this.props;
+    const { onLabelChange, label, onChangeTab } = this.props;
 
     return (
       <Tabs
         defaultActiveKey="1"
         centered
+        onChange={onChangeTab}
         items={[
           {
             label: "Search",

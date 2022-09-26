@@ -60,7 +60,7 @@ export default class MovieCard extends Component {
               className="movies__stars"
               allowHalf
               count={10}
-              defaultValue={vote_average}
+              defaultValue={0}
             />
           </div>
         </div>
