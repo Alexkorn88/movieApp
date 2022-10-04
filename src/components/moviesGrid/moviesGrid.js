@@ -1,18 +1,21 @@
 import { Col, Row } from "antd";
+import { el } from "date-fns/locale";
 import React from "react";
 import MovieCard from "../movieCard/movieCard";
 
-function MoviesGrid({ items, loading, error, label }) {
+function MoviesGrid({ items, loading, error }) {
   const elements = items.map((item) => {
     const { id, ...itemProps } = item;
-    //console.log(id);
+
     return (
       <Col key={id} span={12}>
         <MovieCard
           {...itemProps}
+          id={id}
           items={items}
           loading={loading}
           error={error}
+          item={item}
         />
       </Col>
     );

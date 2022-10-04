@@ -54,4 +54,5 @@ export default class SwapiService {
 }
 
 // const movies = new SwapiService();
-// movies.getResponseGenreMovieDB().then((res) => console.log(res));
+// movies.getResponseGenreMovieDB().then((res) => console.log(res.genres));
+// movies.getValueAsRequest("return").then((res) => console.log(res.results));

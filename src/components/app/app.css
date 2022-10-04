@@ -1,14 +1,27 @@
+html {
+  box-sizing: border-box;
+  /* overflow: visible !important; */
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit;
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
+  /* overflow: visible !important; */
 }
 
 .wrapper {
   width: 100%;
-
+  /* position: fixed; */
   height: 100%;
   background: #f7f7f7;
+  /* overflow: visible !important; */
 }
 
 .container {
@@ -17,6 +30,7 @@ body {
   margin: auto;
   background: #ffffff;
   font-family: "Inter", sans-serif;
+  overflow: visible !important;
 }
 
 .movies__card {
@@ -68,7 +82,7 @@ h2 {
   color: #000000;
 }
 .buttons .ant-btn {
-  margin: 7px 10px 7px 0;
+  margin: 0px 10px 7px 0;
 }
 .ant-col {
   text-overflow: ellipsis;
@@ -127,4 +141,63 @@ h2 {
   height: 281px;
   color: #827e7e;
   opacity: 0.3;
+}
+.average {
+  border: 3px solid #e9d100;
+  border-radius: 50%;
+  min-width: 45px;
+  min-height: 45px;
+  max-width: 45px;
+  max-height: 45px;
+  font-size: 20px;
+  padding: 4px;
+  text-align: center;
+}
+/* .average__span {
+  
+} */
+
+@media screen and (max-width: 1000px) {
+  .wrapper {
+    background: #ffffff;
+  }
+  .ant-row {
+    flex-direction: column !important;
+    align-items: center;
+  }
+  .ant-col-12 {
+    max-width: 100% !important;
+  }
+  .ant-spin-dot {
+    /* max-width: 100% !important; */
+    left: 320%;
+    margin: 100px 10px;
+  }
+  .movies__card {
+    width: 385px;
+    height: 245px;
+    background: #ffffff;
+    display: flex;
+    margin-top: 10px !important;
+    box-shadow: 5px 5px 10px #e5e5e5;
+    margin: 0px;
+  }
+
+  .movies__img {
+    min-width: 60px;
+    height: 91px;
+    margin: 10px;
+  }
+
+  .movies__card {
+    box-shadow: 0px 7px 15px #e5e5e5;
+  }
+
+  h2 {
+    height: 50px;
+    font-size: 16px;
+  }
+  .ant-btn-sm {
+    font-size: 12px;
+  }
 }

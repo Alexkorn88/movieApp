@@ -6,49 +6,60 @@ import MoviesGrid from "../moviesGrid";
 
 import "./app.css";
 import ErrorIndicator from "../errorIndicator/errorIndacator";
-//import Header from "../header";
 import Footer from "../footer";
 import debounce from "lodash.debounce";
 import { Tabs } from "antd";
 import Search from "../search";
+import Rated from "../rated";
+import GenreContext from "../context/context";
 
 export default class App extends Component {
   swapiService = new SwapiService();
+
   state = {
     pageItems: {},
     items: [],
     loading: true,
     error: false,
     label: "return",
-
-    offset: 0,
+    //offset: 0,
     currentPageElements: [],
     pagesCount: null,
     totalPages: 0,
     totalElementsCount: 0,
-
     tabCount: null,
+    genresArr: [],
   };
 
   componentDidMount() {
     this.updateMovies();
     this.updatePages();
+    this.updateGenres();
   }
-  componentDidUpdate(prevProps, prevState) {
-    if (this.props.label !== prevState.label) {
-      this.updateMovies();
-      this.updatePages();
-    }
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (this.state.pagesCount !== prevState.pagesCount) {
+  //     //this.updateMovies(this.state.label);
+  //     this.updatePages();
+  //   }
+  // }
   onError = (err) => {
     this.setState({ error: true, loading: false });
   };
 
-  updateMovies() {
+  updateMovies(label) {
+    const _label = label && label?.length ? label : "return";
     this.swapiService
-      .getValueAsRequest(this.state.label, this.state.pagesCount)
+      .getValueAsRequest(_label, this.state.pagesCount)
       .then((res) => {
+        if (!res.results.length) {
+          this.setState({
+            error: true,
+            loading: false,
+          });
+          return;
+        }
         this.setState({
+          error: false,
           items: res.results,
           loading: false,
           totalPages: res.total_pages,
@@ -70,10 +81,17 @@ export default class App extends Component {
       .catch(this.onError);
   }
 
-  onLabelChange = debounce((e) => {
-    this.setState({
-      label: e.target.value,
+  updateGenres() {
+    this.swapiService.getResponseGenreMovieDB().then((res) => {
+      this.setState({
+        genresArr: res.genres,
+      });
     });
+  }
+  onLabelChange = debounce((e) => {
+    this.updateMovies(e.target.value);
+    this.updatePages();
+    this.updateGenres();
   }, 500);
 
   onChangeTab = (value) => {
@@ -82,12 +100,19 @@ export default class App extends Component {
 
   handlePageClick = (value) => {
     this.setState({ pagesCount: value });
-    //console.log(this.state.pagesCount);
   };
 
   render() {
-    const { items, loading, error, label, pageItems, pagesCount, totalPages } =
-      this.state;
+    const {
+      items,
+      loading,
+      error,
+      label,
+      pageItems,
+      pagesCount,
+      totalPages,
+      genresArr,
+    } = this.state;
 
     const hasData = !(loading || error);
     const errorMassage = error ? <ErrorIndicator /> : null;
@@ -95,49 +120,48 @@ export default class App extends Component {
     const moviesGrid = hasData ? (
       <MoviesGrid items={items} loading={loading} error={error} />
     ) : null;
-    //const startMassage = !label ? <span>Введите запрос</span> : moviesGrid;
-    // const activeTab =
-    //   tabCount === 1 ? console.log("Tab1") : console.log("Tab2");
+    //const startMassage = !moviesGrid ? <span>Введите запрос</span> : moviesGrid;
+
     return (
       <div className="wrapper">
         <div className="container">
-          {/* <Header
-            onLabelChange={this.onLabelChange}
-            label={label}
-            onchangeTab={this.onChangeTab}
-          /> */}
+          <GenreContext.Provider value={genresArr}>
+            <Tabs
+              defaultActiveKey="1"
+              centered
+              onChange={this.onChangeTab}
+              items={[
+                {
+                  label: "Search",
+                  key: "1",
+                  children: (
+                    <>
+                      <Search
+                        onLabelChange={this.onLabelChange}
+                        label={label}
+                      />
 
-          <Tabs
-            defaultActiveKey="1"
-            centered
-            onChange={this.onChangeTab}
-            items={[
-              {
-                label: "Search",
-                key: "1",
-                children: (
-                  <>
-                    <Search onLabelChange={this.onLabelChange} label={label} />
-                    {errorMassage}
-                    {spin}
-                    {moviesGrid}
-                    {/* {startMassage} */}
-                    <Footer
-                      pageItems={pageItems}
-                      pagesCount={pagesCount}
-                      totalPages={totalPages}
-                      handlePageClick={this.handlePageClick}
-                    />
-                  </>
-                ),
-              },
-              {
-                label: "Rated",
-                key: "2",
-                children: "Tab 2",
-              },
-            ]}
-          />
+                      {errorMassage}
+                      {spin}
+                      {moviesGrid}
+                      {/* {startMassage} */}
+                      <Footer
+                        pageItems={pageItems}
+                        pagesCount={pagesCount}
+                        totalPages={totalPages}
+                        handlePageClick={this.handlePageClick}
+                      />
+                    </>
+                  ),
+                },
+                {
+                  label: "Rated",
+                  key: "2",
+                  children: <Rated />,
+                },
+              ]}
+            />
+          </GenreContext.Provider>
         </div>
       </div>
     );

@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-// import 'antd/dist/antd.css';
-// import './index.css';
 import { Pagination } from "antd";
 
 export default class Footer extends Component {

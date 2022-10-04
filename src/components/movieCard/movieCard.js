@@ -3,13 +3,20 @@ import { Button } from "antd";
 import { Rate } from "antd";
 import { format } from "date-fns";
 import { FileImageOutlined } from "@ant-design/icons";
-
-//import "./app.css";
+import GenreContext from "../context/context";
 
 export default class MovieCard extends Component {
   render() {
-    const { poster_path, title, release_date, overview, vote_average } =
-      this.props;
+    const {
+      poster_path,
+      title,
+      release_date,
+      overview,
+      vote_average,
+      genre_ids,
+      id,
+      item,
+    } = this.props;
     const titleMovie = (string) => {
       if (string.length > 52) {
         return `${string.substring(0, 54)}...`;
@@ -38,6 +45,50 @@ export default class MovieCard extends Component {
         );
       }
     };
+
+    const showGenres = (value) => {
+      const genres = value
+        .filter((e) => genre_ids.findIndex((i) => i === e.id) !== -1)
+        .map((item) => {
+          const { id, name } = item;
+          return (
+            <Button key={id} size="small">
+              {name}
+            </Button>
+          );
+        });
+      if (genres.length > 3) {
+        return genres.slice(0, 3);
+      }
+      return genres;
+    };
+
+    const onChangeSession = (value, id) => {
+      let arr = JSON.parse(localStorage.getItem("items")) ?? [];
+      if (arr.length) {
+        const elem = arr.find((el) => el.id === id);
+        if (elem) {
+          arr.map((el) => (el.id === id ? { ...el, rateValue: value } : el));
+        } else {
+          arr.push({ ...item, rateValue: value });
+        }
+        localStorage.setItem("items", JSON.stringify(arr));
+        return;
+      }
+
+      arr.push({ ...item, rateValue: value });
+      localStorage.setItem("items", JSON.stringify(arr));
+    };
+
+    const saveRate = () => {
+      if (localStorage.getItem("items")) {
+        return JSON.parse(localStorage.getItem("items")).filter(
+          (e) => e.rateValue && e.id === id
+        )?.[0]?.rateValue;
+      }
+      return 0;
+    };
+
     return (
       <>
         <div className="movies__card">
@@ -45,22 +96,33 @@ export default class MovieCard extends Component {
           <div className="movies__container">
             <div className="movies__title">
               <h2>{titleMovie(title)}</h2>
-              <Button shape="circle" size="large">
-                {vote_average}
-              </Button>
+              <div
+                className="average"
+                style={{
+                  borderColor:
+                    vote_average <= 3
+                      ? "#E90000"
+                      : 3 < vote_average && vote_average <= 5
+                      ? "#E97E00"
+                      : 5 < vote_average && vote_average <= 7
+                      ? "#E9D100"
+                      : "#66E900",
+                }}
+              >
+                <span className="average__span">{vote_average}</span>
+              </div>
             </div>
-
             <div className="movies__date">{date(release_date)}</div>
             <div className="buttons">
-              <Button size="small">Action</Button>
-              <Button size="small">Dramma</Button>
+              <GenreContext.Consumer>{showGenres}</GenreContext.Consumer>
             </div>
             <span className="movies__info">{overview}</span>
             <Rate
               className="movies__stars"
               allowHalf
               count={10}
-              defaultValue={0}
+              defaultValue={saveRate()}
+              onChange={(value) => onChangeSession(value, id)}
             />
           </div>
         </div>
