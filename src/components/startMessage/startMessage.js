@@ -1,7 +1,7 @@
-import React from "react";
-import { Alert } from "antd";
+import React from 'react';
+import { Alert } from 'antd';
 
-const StartMessage = () => {
+function StartMessage() {
   return <Alert message="Пожалуйста введите запрос..." type="info" />;
-};
+}
 export default StartMessage;

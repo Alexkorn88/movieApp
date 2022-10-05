@@ -1,6 +1,7 @@
-import { Col, Row } from "antd";
-import React from "react";
-import MovieCard from "../movieCard/movieCard";
+import { Col, Row } from 'antd';
+import React from 'react';
+
+import MovieCard from '../movieCard/movieCard';
 
 function MoviesGrid({ items, loading, error }) {
   const elements = items.map((item) => {
@@ -8,14 +9,7 @@ function MoviesGrid({ items, loading, error }) {
 
     return (
       <Col key={id} span={12}>
-        <MovieCard
-          {...itemProps}
-          id={id}
-          items={items}
-          loading={loading}
-          error={error}
-          item={item}
-        />
+        <MovieCard {...itemProps} id={id} items={items} loading={loading} error={error} item={item} />
       </Col>
     );
   });

@@ -1,9 +1,10 @@
-import { Col, Row } from "antd";
-import React from "react";
-import MovieCard from "../movieCard/movieCard";
+import { Col, Row } from 'antd';
+import React from 'react';
+
+import MovieCard from '../movieCard/movieCard';
 
 function Rated() {
-  const itemsStorage = JSON.parse(localStorage.getItem("items"));
+  const itemsStorage = JSON.parse(localStorage.getItem('items'));
   if (itemsStorage) {
     const elements = itemsStorage.map((item) => {
       const { id, ...itemProps } = item;

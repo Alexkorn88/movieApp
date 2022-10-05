@@ -1,3 +1,3 @@
-import MoviesGrid from "./moviesGrid";
+import MoviesGrid from './moviesGrid';
 
 export default MoviesGrid;

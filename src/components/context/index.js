@@ -1,3 +1,3 @@
-import GenreContext from "./context";
+import GenreContext from './context';
 
 export default GenreContext;

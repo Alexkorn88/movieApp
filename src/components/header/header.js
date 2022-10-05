@@ -1,9 +1,10 @@
-import React from "react";
+/* eslint-disable react/prefer-stateless-function */
+import React, { Component } from 'react';
 // import "antd/dist/antd.css";
 // import "./index.css";
-import { Tabs } from "antd";
-import Search from "../search";
-import { Component } from "react";
+import { Tabs } from 'antd';
+
+import Search from '../search';
 
 export default class Header extends Component {
   render() {
@@ -16,14 +17,14 @@ export default class Header extends Component {
         onChange={onChangeTab}
         items={[
           {
-            label: "Search",
-            key: "1",
+            label: 'Search',
+            key: '1',
             children: <Search onLabelChange={onLabelChange} label={label} />,
           },
           {
-            label: "Rated",
-            key: "2",
-            children: "Tab 2",
+            label: 'Rated',
+            key: '2',
+            children: 'Tab 2',
           },
         ]}
       />

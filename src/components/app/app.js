@@ -1,17 +1,20 @@
-import React, { Component } from "react";
-import SwapiService from "../servises/swapiServis";
-import { Spin } from "antd";
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable react/state-in-constructor */
+import React, { Component } from 'react';
+import { Spin, Tabs } from 'antd';
 
-import MoviesGrid from "../moviesGrid";
+import SwapiService from '../servises/swapiServis';
+import MoviesGrid from '../moviesGrid';
+import './app.css';
+import ErrorIndicator from '../errorIndicator/errorIndacator';
+import Footer from '../footer';
 
-import "./app.css";
-import ErrorIndicator from "../errorIndicator/errorIndacator";
-import Footer from "../footer";
-import debounce from "lodash.debounce";
-import { Tabs } from "antd";
-import Search from "../search";
-import Rated from "../rated";
-import GenreContext from "../context/context";
+// eslint-disable-next-line import/order
+import debounce from 'lodash.debounce';
+
+import Search from '../search';
+import Rated from '../rated';
+import GenreContext from '../context/context';
 
 export default class App extends Component {
   swapiService = new SwapiService();
@@ -21,12 +24,9 @@ export default class App extends Component {
     items: [],
     loading: true,
     error: false,
-    label: "return",
-    currentPageElements: [],
+    label: 'return',
     pagesCount: null,
     totalPages: 0,
-    totalElementsCount: 0,
-    tabCount: null,
     genresArr: [],
   };
 
@@ -36,12 +36,29 @@ export default class App extends Component {
     this.updateGenres();
   }
 
-  onError = (err) => {
+  onError = () => {
     this.setState({ error: true, loading: false, totalPages: 0 });
   };
 
+  onLabelChange = debounce((e) => {
+    this.setState({ pagesCount: 1 });
+    this.updateMovies(e.target.value, 1);
+    this.updatePages();
+    this.updateGenres();
+  }, 500);
+
+  onChangeTab = (value) => {
+    // eslint-disable-next-line react/no-unused-state
+    this.setState({ tabCount: value });
+  };
+
+  handlePageClick = (value) => {
+    this.setState({ pagesCount: value });
+    this.updateMovies(this.state.label, value);
+  };
+
   updateMovies(label, page) {
-    const _label = label && label?.length ? label : "return";
+    const _label = label && label?.length ? label : 'return';
     const _page = page ?? this.state.pagesCount;
     this.swapiService
       .getValueAsRequest(_label, _page)
@@ -58,10 +75,8 @@ export default class App extends Component {
           items: res.results,
           loading: false,
           totalPages: res.total_pages,
-          totalElementsCount: res.total_results,
           label: _label,
         });
-        // this.setState({ pagesCount: null });
       })
       .catch(this.onError);
   }
@@ -85,40 +100,14 @@ export default class App extends Component {
       });
     });
   }
-  onLabelChange = debounce((e) => {
-    this.setState({ pagesCount: 1 });
-    this.updateMovies(e.target.value, 1);
-    this.updatePages();
-    this.updateGenres();
-  }, 500);
-
-  onChangeTab = (value) => {
-    this.setState({ tabCount: value });
-  };
-
-  handlePageClick = (value) => {
-    this.setState({ pagesCount: value });
-    this.updateMovies(this.state.label, value);
-  };
 
   render() {
-    const {
-      items,
-      loading,
-      error,
-      label,
-      pageItems,
-      pagesCount,
-      totalPages,
-      genresArr,
-    } = this.state;
+    const { items, loading, error, label, pageItems, pagesCount, totalPages, genresArr } = this.state;
 
     const hasData = !(loading || error);
     const errorMassage = error ? <ErrorIndicator /> : null;
     const spin = loading ? <Spin size="large" /> : null;
-    const moviesGrid = hasData ? (
-      <MoviesGrid items={items} loading={loading} error={error} />
-    ) : null;
+    const moviesGrid = hasData ? <MoviesGrid items={items} loading={loading} error={error} /> : null;
 
     return (
       <div className="wrapper">
@@ -130,14 +119,11 @@ export default class App extends Component {
               onChange={this.onChangeTab}
               items={[
                 {
-                  label: "Search",
-                  key: "1",
+                  label: 'Search',
+                  key: '1',
                   children: (
                     <>
-                      <Search
-                        onLabelChange={this.onLabelChange}
-                        label={label}
-                      />
+                      <Search onLabelChange={this.onLabelChange} label={label} />
                       {errorMassage}
                       {spin}
                       {moviesGrid}
@@ -151,8 +137,8 @@ export default class App extends Component {
                   ),
                 },
                 {
-                  label: "Rated",
-                  key: "2",
+                  label: 'Rated',
+                  key: '2',
                   children: <Rated />,
                 },
               ]}
