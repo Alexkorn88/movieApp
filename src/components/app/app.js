@@ -22,7 +22,6 @@ export default class App extends Component {
     loading: true,
     error: false,
     label: "return",
-    //offset: 0,
     currentPageElements: [],
     pagesCount: null,
     totalPages: 0,
@@ -36,20 +35,16 @@ export default class App extends Component {
     this.updatePages();
     this.updateGenres();
   }
-  // componentDidUpdate(prevProps, prevState) {
-  //   if (this.state.pagesCount !== prevState.pagesCount) {
-  //     //this.updateMovies(this.state.label);
-  //     this.updatePages();
-  //   }
-  // }
+
   onError = (err) => {
-    this.setState({ error: true, loading: false });
+    this.setState({ error: true, loading: false, totalPages: 0 });
   };
 
-  updateMovies(label) {
+  updateMovies(label, page) {
     const _label = label && label?.length ? label : "return";
+    const _page = page ?? this.state.pagesCount;
     this.swapiService
-      .getValueAsRequest(_label, this.state.pagesCount)
+      .getValueAsRequest(_label, _page)
       .then((res) => {
         if (!res.results.length) {
           this.setState({
@@ -64,7 +59,9 @@ export default class App extends Component {
           loading: false,
           totalPages: res.total_pages,
           totalElementsCount: res.total_results,
+          label: _label,
         });
+        // this.setState({ pagesCount: null });
       })
       .catch(this.onError);
   }
@@ -89,7 +86,8 @@ export default class App extends Component {
     });
   }
   onLabelChange = debounce((e) => {
-    this.updateMovies(e.target.value);
+    this.setState({ pagesCount: 1 });
+    this.updateMovies(e.target.value, 1);
     this.updatePages();
     this.updateGenres();
   }, 500);
@@ -100,6 +98,7 @@ export default class App extends Component {
 
   handlePageClick = (value) => {
     this.setState({ pagesCount: value });
+    this.updateMovies(this.state.label, value);
   };
 
   render() {
@@ -120,7 +119,6 @@ export default class App extends Component {
     const moviesGrid = hasData ? (
       <MoviesGrid items={items} loading={loading} error={error} />
     ) : null;
-    //const startMassage = !moviesGrid ? <span>Введите запрос</span> : moviesGrid;
 
     return (
       <div className="wrapper">
@@ -140,11 +138,9 @@ export default class App extends Component {
                         onLabelChange={this.onLabelChange}
                         label={label}
                       />
-
                       {errorMassage}
                       {spin}
                       {moviesGrid}
-                      {/* {startMassage} */}
                       <Footer
                         pageItems={pageItems}
                         pagesCount={pagesCount}

@@ -5,7 +5,7 @@ const ErrorIndicator = () => {
   return (
     <Alert
       message="Что-то пошло не так"
-      description="Мы не смогли ни чего найти"
+      description="Проверьте правильность ввода..."
       type="info"
     />
   );

@@ -3,8 +3,7 @@ import { Pagination } from "antd";
 
 export default class Footer extends Component {
   render() {
-    const { totalPages, handlePageClick } = this.props;
-
+    const { totalPages, handlePageClick, pagesCount } = this.props;
     return (
       <>
         {totalPages > 1 && (
@@ -15,6 +14,7 @@ export default class Footer extends Component {
             showSizeChanger={false}
             total={totalPages}
             onChange={handlePageClick}
+            current={pagesCount ? pagesCount : 1}
           />
         )}
       </>

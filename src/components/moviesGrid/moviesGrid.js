@@ -1,5 +1,4 @@
 import { Col, Row } from "antd";
-import { el } from "date-fns/locale";
 import React from "react";
 import MovieCard from "../movieCard/movieCard";
 

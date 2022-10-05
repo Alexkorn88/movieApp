@@ -4,21 +4,8 @@ export default class SwapiService {
   keyAPI = "?api_key=e3c7bd01103073ebcb552edef41991b9";
   language = "&language=en-US";
 
-  // async getResource(url) {
-  //   const res = await fetch(
-  //     `${this._apiBase}${this.requestType}${this.keyAPI}${this.language}${url}`
-  //   );
-
-  //   if (!res.ok) {
-  //     throw new Error(`Ошибка сервера ${res.status}`);
-  //   }
-  // const body = await res.json();
-  // return body;
-  // }
-
   async getValueAsRequest(string, pagesCount = 1) {
     if (!string || /^\s+$/.test(string)) return;
-    // try {
     const res = await fetch(
       `${this._apiBase}${this.requestType}${this.keyAPI}${
         this.language
@@ -30,10 +17,6 @@ export default class SwapiService {
     }
     const body = await res.json();
     return body;
-    //return res;
-    // } catch (error) {
-    //   console.log(`ошибка ${error}`);
-    // }
   }
 
   async getResponseGenreMovieDB() {
@@ -52,7 +35,3 @@ export default class SwapiService {
     return body;
   }
 }
-
-// const movies = new SwapiService();
-// movies.getResponseGenreMovieDB().then((res) => console.log(res.genres));
-// movies.getValueAsRequest("return").then((res) => console.log(res.results));
